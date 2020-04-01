@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.guc_registration_system">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/logo_guc"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".List.ListRegisterCourse"></activity>
+        <activity android:name=".Lecture.LectureTimetableActivity" />
+        <activity android:name=".Lecture.LectureUpdateProfileActivity" />
+        <activity android:name=".Lecture.LectureProfileActivity" />
+        <activity android:name=".UpdatePasswordActivity" />
+        <activity android:name=".Student.StudentUpdateProfileActivity" />
+        <activity android:name=".Student.MyCourseActivity" />
+        <activity android:name=".Student.RegisterCourseActivity" />
+        <activity android:name=".Student.StudentProfileActivity" />
+        <activity android:name=".Lecture.LectureRegisterActivity" />
+        <activity android:name=".Student.StudentRegisterActivity" />
+        <activity android:name=".Lecture.LectureHomepageActivity" />
+        <activity android:name=".Student.StudentHomepageActivity" />
+        <activity android:name=".ForgotPasswordActivity" />
+        <activity android:name=".Lecture.LectureLoginActivity" />
+        <activity android:name=".Student.StudentLoginActivity" />
+        <activity android:name=".RegisterUserActivity" />
+        <activity android:name=".LoginUserActivity" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".SplashScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "386583866233",
+    "firebase_url": "https://guc-registration-system.firebaseio.com",
+    "project_id": "guc-registration-system",
+    "storage_bucket": "guc-registration-system.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:386583866233:android:602f6c854c207ece385da8",
+        "android_client_info": {
+          "package_name": "com.example.guc_registration_system"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "386583866233-ehpvm535i4cvp1edp2nbsfhlqal3p2ot.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_swuHPQQRaWMFBLQHNYSDxkl5dvgGoEk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "386583866233-ehpvm535i4cvp1edp2nbsfhlqal3p2ot.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
