@@ -49,6 +49,7 @@ public class RegisterCourseAdapter extends RecyclerView.Adapter<RegisterCourseAd
 
         TextView textViewCourseID, textViewCourseName;
 
+
         public CourseViewHolder( View itemView) {
             super(itemView);
 

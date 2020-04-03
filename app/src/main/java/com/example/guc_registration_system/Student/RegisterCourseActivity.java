@@ -20,8 +20,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.example.guc_registration_system.Model.CourseModel;
+import com.example.guc_registration_system.Model.StudentCourseRegisterModel;
 import com.example.guc_registration_system.Model.StudentModel;
 import com.example.guc_registration_system.R;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -42,7 +44,8 @@ public class RegisterCourseActivity extends AppCompatActivity {
 
     TextView tvName, tvStudentID, tvAddress, tvProgramme, tvSemester;
     EditText etCourseID, etCourseName;
-    Button btn_register, btn_enroll;
+    Button btn_register;
+    ToggleButton btn_enroll;
     String courseID, courseName,programmeName,semester;
     //public static final String programmeName = "programmeName", semester="semester";
     private FirebaseDatabase firebaseDatabase;
@@ -61,8 +64,6 @@ public class RegisterCourseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_course);
-
-        //parentLinearLayout = findViewById(R.id.parent_linear_layout);
 
         tvName = findViewById(R.id.studName);
         tvStudentID = findViewById(R.id.studID);
@@ -92,7 +93,44 @@ public class RegisterCourseActivity extends AppCompatActivity {
                 tvAddress.setText(userProfile.getStudAddress());
                 tvProgramme.setText(userProfile.getProgramme());
                 tvSemester.setText(userProfile.getStudSemester());
-            }
+
+                Toast.makeText(getApplicationContext(), "prog "+userProfile.getProgramme()+ "year "+userProfile.getStudSemester(), Toast.LENGTH_SHORT).show();
+                Log.d("TAG", "prog : "+userProfile.getProgramme());
+                Log.d("TAG", "sem : "+userProfile.getStudSemester());
+
+                final Query query = FirebaseDatabase.getInstance().getReference("University").child("Faculty Of Computing And Creative Technology").child("Programme")
+                        .child(userProfile.getProgramme()).orderByChild("courseYear").equalTo(userProfile.getStudSemester());
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        courseList = new ArrayList<CourseModel>();
+                        //Log.d("TAG", "data : "+dataSnapshot.toString());
+
+                        for(DataSnapshot data: dataSnapshot.getChildren()) {
+
+                            Log.d("TAG", "each data : " + data.toString());
+
+                            String courseID = data.child("courseID").getValue().toString();
+                            String courseName =  data.child("courseName").getValue().toString();
+
+                            Log.d("TAG", "courseID : "+data.toString());
+                            Log.d("TAG", "courseID : "+data.child("courseID").getValue().toString());
+                            Log.d("TAG", "courseName : "+data.child("courseName").getValue().toString());
+
+                            courseList.add(new CourseModel(courseID,courseName));
+                        }
+
+                        adapter = new RegisterCourseAdapter(courseList);
+                        recyclerView.setAdapter(adapter);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                    }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -101,167 +139,56 @@ public class RegisterCourseActivity extends AppCompatActivity {
             }
         });
 
-        programmeName = tvProgramme.getText().toString().trim();
-        semester = tvSemester.getText().toString();
-
-
-        dbCourse = FirebaseDatabase.getInstance().getReference().child("University");
-        final Query query = FirebaseDatabase.getInstance().getReference("University").child("Faculty Of Computing And Creative Technology").child("Programme")
-                .child(programmeName).equalTo(semester);
-
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot data: dataSnapshot.getChildren()) {
-                    if (data.child(programmeName).exists() && data.child(semester).exists()) {
-                        courseList = new ArrayList<CourseModel>();
-                        for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                            CourseModel p = dataSnapshot1.getValue(CourseModel.class);
-                            courseList.add(p);
-
-                        }
-                        adapter = new RegisterCourseAdapter(courseList);
-                        recyclerView.setAdapter(adapter);
-                    }else{
-                        Toast.makeText(RegisterCourseActivity.this, "TAKDOP", Toast.LENGTH_LONG).show();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(RegisterCourseActivity.this, "There is an error occur. Please try again.", Toast.LENGTH_LONG).show();
-
-            }
-        });
-
         btn_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (validate()) {
 
-                    //DatabaseReference myRef = FirebaseDatabase.getInstance().getReference("Course").push();
+                    semester = tvSemester.getText().toString();
+                    programmeName = tvProgramme.getText().toString();
 
-                    CourseModel course = new CourseModel(courseID, courseName);
-                    addCourse(course);
-                }
+
+                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                    DatabaseReference myref = database.getReference("Students").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("MyCourse").child(semester);
+
+                    StudentCourseRegisterModel course = new StudentCourseRegisterModel(courseName,courseID,semester,programmeName);
+                    myref.setValue(course);
+                    Toast.makeText(RegisterCourseActivity.this,"Your course for" + semester + "is registered!", Toast.LENGTH_SHORT).show();
+                    finish();
+                    startActivity(new Intent(RegisterCourseActivity.this,StudentHomepageActivity.class));
+
             }
         });
 
     }
 
-    private Boolean validate() {
-        Boolean result = false;
 
-        courseID = etCourseID.getText().toString();
-        courseName = etCourseName.getText().toString();
-
-
-        if (courseID.isEmpty() || courseName.isEmpty()) {
-            Toast.makeText(this, "Please fill up courseID and course name!!", Toast.LENGTH_SHORT).show();
-        } else {
-            result = true;
-        }
-        return result;
-    }
-
-
-    private void addCourse(CourseModel course) {
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myref = database.getReference("Course").push();
-
-        String key = myref.getKey();
-        //course.setCourseDatabaseID(key);
-
-        //add post data to firebase database
-        myref.setValue(course).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-
-                Toast.makeText(RegisterCourseActivity.this, "Your course registration are submitted", Toast.LENGTH_SHORT).show();
-                finish();
-                startActivity(new Intent(RegisterCourseActivity.this, StudentHomepageActivity.class));
-            }
-        });
-
-    }
+//    private void addCourse(StudentCourseRegisterModel course) {
+//
+//        semester = tvSemester.getText().toString();
+//        programmeName = tvProgramme.getText().toString();
+//        //courseID = data.child("courseID").getValue().toString();
+//        //courseName =  data.child("courseName").getValue().toString();
+//
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myref = database.getReference("Student").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("MyCourse").child(semester);
+//
+//        String key = myref.getKey();
+//        //course.setCourseDatabaseID(key);
+//
+//        //add post data to firebase database
+//        myref.setValue(course).addOnSuccessListener(new OnSuccessListener<Void>() {
+//            @Override
+//            public void onSuccess(Void aVoid) {
+//
+//                Toast.makeText(RegisterCourseActivity.this, "Your course registration are submitted", Toast.LENGTH_SHORT).show();
+//                finish();
+//                startActivity(new Intent(RegisterCourseActivity.this, StudentHomepageActivity.class));
+//            }
+//        });
+//
+//    }
 }
 
-//    public void onAddField(View v) {
-//        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        final View rowView = inflater.inflate(R.layout.add_course, null);
-//        // Add the new row before the add field button.
-//        parentLinearLayout.addView(rowView, parentLinearLayout.getChildCount() - 1);
-//    }
-//
-//    public void onDelete(View v) {
-//        parentLinearLayout.removeView((View) v.getParent());
-//    }
-//    public void clickDelete(View v) {
-//        parentLinearLayout.removeView((View) v.getParent());
-//    }
 
-//    final Query query = FirebaseDatabase.getInstance().getReference("Faculty");
-//
-//            query.addValueEventListener(new ValueEventListener() {
-//        @Override
-//        public void onDataChange(DataSnapshot dataSnapshot) {
-//            courseList= new ArrayList<CourseModel>();
-//            for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
-//            {
-//                CourseModel p = dataSnapshot1.getValue(CourseModel.class);
-//                courseList.add(p);
-//
-//            }
-//            adapter = new RegisterCourseAdapter(courseList);
-//            recyclerView.setAdapter(adapter);
-//        }
-//
-//        @Override
-//        public void onCancelled(DatabaseError databaseError) {
-//            Toast.makeText(RegisterCourseActivity.this, "There is an error occur. Please try again.", Toast.LENGTH_LONG).show();
-//
-//        }
-//    });
-
-
-//    else if(tvSemester.equals("semester1/year2")){
-//        Query query = FirebaseDatabase.getInstance().getReference("Faculty").child("Faculty of Computing and Creative Technology").child("Programme")
-//                .child("Bachelor of Computer Sciences (Hons)").child("Year 2").child("Semester 1");
-//
-//
-//    }
-//            else if(tvSemester.equals("semester2/year2")){
-//        Query query = FirebaseDatabase.getInstance().getReference("Faculty").child("Faculty of Computing and Creative Technology").child("Programme")
-//                .child("Bachelor of Computer Sciences (Hons)").child("Year 2").child("Semester 2");
-//
-//
-//    }
-//            else if(tvSemester.equals("semester3/year2")){
-//        Query query = FirebaseDatabase.getInstance().getReference("Faculty").child("Faculty of Computing and Creative Technology").child("Programme")
-//                .child("Bachelor of Computer Sciences (Hons)").child("Year 2").child("Semester 3");
-//
-//
-//    }
-//            else if(tvSemester.equals("semester1/year3")){
-//        Query query = FirebaseDatabase.getInstance().getReference("Faculty").child("Faculty of Computing and Creative Technology").child("Programme")
-//                .child("Bachelor of Computer Sciences (Hons)").child("Year 3").child("Semester 1");
-//
-//
-//    }
-//            else if(tvSemester.equals("semester2/year3")){
-//        Query query= FirebaseDatabase.getInstance().getReference("Faculty").child("Faculty of Computing and Creative Technology").child("Programme")
-//                .child("Bachelor of Computer Sciences (Hons)").child("Year 3").child("Semester 2");
-//
-//
-//    }
-//            else if(tvSemester.equals("semester3/year3"))
-//    {
-//        Query query = FirebaseDatabase.getInstance().getReference("Faculty").child("Faculty of Computing and Creative Technology").child("Programme")
-//                .child("Bachelor of Computer Sciences (Hons)").child("Year 3").child("Semester 3");
-//
-//
-//    }
 
 
