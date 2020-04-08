@@ -243,15 +243,15 @@ public class StudentRegisterActivity extends AppCompatActivity {
     private void spinnerSemester() {
 
         List<String> listStatus = new ArrayList<>();
-        listStatus.add("semester1/year1");
-        listStatus.add("semester2/year1");
-        listStatus.add("semester3/year1");
-        listStatus.add("semester1/year2");
-        listStatus.add("semester2/year2");
-        listStatus.add("semester3/year2");
-        listStatus.add("semester1/year3");
-        listStatus.add("semester2/year3");
-        listStatus.add("semester3/year3");
+        listStatus.add("semester1");
+        listStatus.add("semester2");
+        listStatus.add("semester3");
+        listStatus.add("semester4");
+        listStatus.add("semester5");
+        listStatus.add("semester6");
+        listStatus.add("semester7");
+        listStatus.add("semester8");
+        listStatus.add("semester9");
 
         ArrayAdapter<String> adapterStatus = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, listStatus);
 

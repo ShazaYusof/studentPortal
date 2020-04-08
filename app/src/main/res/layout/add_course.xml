@@ -39,7 +39,7 @@
                     android:id="@+id/btnEnroll"
                     android:layout_width="51dp"
                     android:layout_height="30dp"
-                    android:textOn="cancel"
+                    android:textOn="Drop"
                     android:textOff="Enroll"
                     android:textSize="6sp"
                     android:textColor="@color/maroon"

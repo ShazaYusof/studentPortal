@@ -5,30 +5,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.example.guc_registration_system.Adapter.RegisterCourseAdapter;
 import com.example.guc_registration_system.Model.CourseModel;
-import com.example.guc_registration_system.Model.StudentCourseRegisterModel;
 import com.example.guc_registration_system.Model.StudentModel;
 import com.example.guc_registration_system.R;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,12 +29,14 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class RegisterCourseActivity extends AppCompatActivity {
+public class RegisterCourseActivity extends AppCompatActivity implements RegisterCourseAdapter.OnListListener{
 
     private LinearLayout parentLinearLayout;
 
-    TextView tvName, tvStudentID, tvAddress, tvProgramme, tvSemester;
+    TextView tvName, tvStudentID, tvAddress, tvProgramme, tvSemester,tvRemainder;
     EditText etCourseID, etCourseName;
     Button btn_register;
     ToggleButton btn_enroll;
@@ -52,13 +46,15 @@ public class RegisterCourseActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
 
     RecyclerView recyclerView;
-    ArrayList<CourseModel> courseList;
     RegisterCourseAdapter adapter;
     ProgressBar progressBar;
+
+    ArrayList<CourseModel> courseList = new ArrayList<CourseModel>();
 
 
     DatabaseReference dbCourse;
 
+    String mySemester;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +70,7 @@ public class RegisterCourseActivity extends AppCompatActivity {
         btn_enroll = findViewById(R.id.btnEnroll);
         recyclerView = findViewById(R.id.RecyclerCourse);
         progressBar = findViewById(R.id.progressBar);
+        tvRemainder = findViewById(R.id.tvNotes);
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -81,10 +78,12 @@ public class RegisterCourseActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
 
+        tvRemainder.setVisibility(View.GONE);
+
 
         DatabaseReference databaseReference = firebaseDatabase.getReference("Students").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 StudentModel userProfile = dataSnapshot.getValue(StudentModel.class);
@@ -93,6 +92,8 @@ public class RegisterCourseActivity extends AppCompatActivity {
                 tvAddress.setText(userProfile.getStudAddress());
                 tvProgramme.setText(userProfile.getProgramme());
                 tvSemester.setText(userProfile.getStudSemester());
+
+                mySemester = userProfile.getStudSemester();
 
                 Toast.makeText(getApplicationContext(), "prog "+userProfile.getProgramme()+ "year "+userProfile.getStudSemester(), Toast.LENGTH_SHORT).show();
                 Log.d("TAG", "prog : "+userProfile.getProgramme());
@@ -103,7 +104,7 @@ public class RegisterCourseActivity extends AppCompatActivity {
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        courseList = new ArrayList<CourseModel>();
+
                         //Log.d("TAG", "data : "+dataSnapshot.toString());
 
                         for(DataSnapshot data: dataSnapshot.getChildren()) {
@@ -120,7 +121,7 @@ public class RegisterCourseActivity extends AppCompatActivity {
                             courseList.add(new CourseModel(courseID,courseName));
                         }
 
-                        adapter = new RegisterCourseAdapter(courseList);
+                        adapter = new RegisterCourseAdapter(courseList, RegisterCourseActivity.this);
                         recyclerView.setAdapter(adapter);
                     }
 
@@ -130,7 +131,7 @@ public class RegisterCourseActivity extends AppCompatActivity {
                     }
                 });
 
-                    }
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -143,22 +144,41 @@ public class RegisterCourseActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                    semester = tvSemester.getText().toString();
-                    programmeName = tvProgramme.getText().toString();
+                tvRemainder.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+                Toast.makeText(RegisterCourseActivity.this,"Your course for" + semester + "is registered!", Toast.LENGTH_SHORT).show();
+                //finish();
+                //startActivity(new Intent(RegisterCourseActivity.this,StudentHomepageActivity.class));
 
+    }
+});
 
-                    FirebaseDatabase database = FirebaseDatabase.getInstance();
-                    DatabaseReference myref = database.getReference("Students").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("MyCourse").child(semester);
+    }
 
-                    StudentCourseRegisterModel course = new StudentCourseRegisterModel(courseName,courseID,semester,programmeName);
-                    myref.setValue(course);
-                    Toast.makeText(RegisterCourseActivity.this,"Your course for" + semester + "is registered!", Toast.LENGTH_SHORT).show();
-                    finish();
-                    startActivity(new Intent(RegisterCourseActivity.this,StudentHomepageActivity.class));
+    @Override
+    public void onEnrollCLick(int position) {
 
-            }
-        });
+        Toast.makeText(this, "courseID : "+courseList.get(position).courseName, Toast.LENGTH_SHORT).show();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        //List<String> courseYear = Arrays.asList(mySemester.split("/"));
+        List<String> courseYear = Arrays.asList(mySemester);
+        //Log.d("TAG", "test sem :"+courseYear.get(0)+"test year : "+courseYear.get(1));
+        Log.d("TAG", "test sem :"+courseYear.get(0));
+        //String year = courseYear.get(0);
+        String sem = courseYear.get(0);
+        DatabaseReference myref = database.getReference("StudentCourse").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(sem).child(courseList.get(position).getCourseID());
+        myref.setValue(courseList.get(position).getCourseName());
+    }
 
+    @Override
+    public void onCancelClick(int position) {
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        List<String> courseYear = Arrays.asList(mySemester);
+        //String year = courseYear.get(0);
+        String sem = courseYear.get(0);
+        DatabaseReference myref = database.getReference("StudentCourse").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(sem).child(courseList.get(position).getCourseID());
+        myref.removeValue();
     }
 
 

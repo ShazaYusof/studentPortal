@@ -2,7 +2,7 @@ package com.example.guc_registration_system.Model;
 
 public class StudentCourseRegisterModel {
 
-    public String courseName,courseID,courseYear,courseProgramme;
+    public String courseName,courseID,courseYear,courseProgramme,studID;
 
     public StudentCourseRegisterModel(){
 

@@ -213,6 +213,18 @@
 
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/tvNotes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="You already register your courses.For more information, please refer at MY COURSE page "
+                    android:gravity="center"
+                    android:textColor="@color/maroon"
+                    android:textStyle="bold"
+                    android:layout_marginTop="20dp"
+                    />
+
+
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/RecyclerCourse"
                             android:scrollbars="vertical"
