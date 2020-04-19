@@ -49,7 +49,7 @@ public class LectureHomepageActivity extends AppCompatActivity {
         btnSubject.setOnClickListener(new View.OnClickListener(){
                                            @Override
                                            public void onClick(View view){
-                                               Intent intent = new Intent(getApplicationContext(), RegisterCourseActivity.class);
+                                               Intent intent = new Intent(getApplicationContext(), LectureCourseActivity.class);
                                                startActivity(intent);
                                            }
                                        }

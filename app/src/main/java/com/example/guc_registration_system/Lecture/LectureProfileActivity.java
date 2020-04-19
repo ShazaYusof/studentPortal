@@ -11,11 +11,8 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.guc_registration_system.Model.LectureModel;
-import com.example.guc_registration_system.Model.StudentModel;
+import com.example.guc_registration_system.Model.LecturerModel;
 import com.example.guc_registration_system.R;
-import com.example.guc_registration_system.Student.StudentProfileActivity;
-import com.example.guc_registration_system.Student.StudentUpdateProfileActivity;
 import com.example.guc_registration_system.UpdatePasswordActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -63,10 +60,10 @@ public class LectureProfileActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        DatabaseReference databaseReference = firebaseDatabase.getReference("Students").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Lectures").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         StorageReference storageReference = firebaseStorage.getReference();
-        storageReference.child(firebaseAuth.getUid()).child("Images/Profile Pic").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+        storageReference.child(firebaseAuth.getUid()).child("Images/Lecture Pic").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 Picasso.get().load(uri).fit().centerCrop().into(profilePic);
@@ -94,7 +91,7 @@ public class LectureProfileActivity extends AppCompatActivity {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                LectureModel lectureProfile = dataSnapshot.getValue(LectureModel.class);
+                LecturerModel lectureProfile = dataSnapshot.getValue(LecturerModel.class);
                 profileID.setText(lectureProfile.getLectID());
                 profileName.setText( lectureProfile.getLectName());
                 profileIC.setText(lectureProfile.getLectPassport());

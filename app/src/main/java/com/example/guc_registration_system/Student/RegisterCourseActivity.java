@@ -18,6 +18,7 @@ import android.widget.ToggleButton;
 
 import com.example.guc_registration_system.Adapter.RegisterCourseAdapter;
 import com.example.guc_registration_system.Model.CourseModel;
+import com.example.guc_registration_system.Model.StudentCourseModel;
 import com.example.guc_registration_system.Model.StudentModel;
 import com.example.guc_registration_system.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -113,12 +114,13 @@ public class RegisterCourseActivity extends AppCompatActivity implements Registe
 
                             String courseID = data.child("courseID").getValue().toString();
                             String courseName =  data.child("courseName").getValue().toString();
+                            //String studId  = data.child("studId").getValue().toString();
 
                             Log.d("TAG", "courseID : "+data.toString());
                             Log.d("TAG", "courseID : "+data.child("courseID").getValue().toString());
                             Log.d("TAG", "courseName : "+data.child("courseName").getValue().toString());
 
-                            courseList.add(new CourseModel(courseID,courseName));
+                            courseList.add(new CourseModel(courseID,courseName,null,null,null));
                         }
 
                         adapter = new RegisterCourseAdapter(courseList, RegisterCourseActivity.this);
@@ -158,6 +160,9 @@ public class RegisterCourseActivity extends AppCompatActivity implements Registe
     @Override
     public void onEnrollCLick(int position) {
 
+        String studId =  tvStudentID.getText().toString();
+        String studName = tvName.getText().toString();
+
         Toast.makeText(this, "courseID : "+courseList.get(position).courseName, Toast.LENGTH_SHORT).show();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         //List<String> courseYear = Arrays.asList(mySemester.split("/"));
@@ -166,8 +171,10 @@ public class RegisterCourseActivity extends AppCompatActivity implements Registe
         Log.d("TAG", "test sem :"+courseYear.get(0));
         //String year = courseYear.get(0);
         String sem = courseYear.get(0);
-        DatabaseReference myref = database.getReference("StudentCourse").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(sem).child(courseList.get(position).getCourseID());
-        myref.setValue(courseList.get(position).getCourseName());
+
+        StudentCourseModel studentCourseModel = new StudentCourseModel(null,FirebaseAuth.getInstance().getCurrentUser().getUid(),courseList.get(position).getCourseID(),mySemester,studId,studName);
+        DatabaseReference myref = database.getReference("StudentCourse");
+        myref.push().setValue(studentCourseModel);
     }
 
     @Override

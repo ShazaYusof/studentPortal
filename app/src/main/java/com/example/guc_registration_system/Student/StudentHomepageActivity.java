@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.guc_registration_system.Lecture.ClassAttendanceActivity;
 import com.example.guc_registration_system.MainActivity;
 import com.example.guc_registration_system.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -51,15 +52,15 @@ public class StudentHomepageActivity extends AppCompatActivity {
                                        }
         );
 
-//        btnSchedule.setOnClickListener(new View.OnClickListener(){
-//                                           @Override
-//                                           public void onClick(View view){
-//                                               Intent intent = new Intent(getApplicationContext(), RegisterHomestayActivity.class);
-//                                               startActivity(intent);
-//                                           }
-//                                       }
-//        );
-//
+        btnSchedule.setOnClickListener(new View.OnClickListener(){
+                                           @Override
+                                           public void onClick(View view){
+                                               Intent intent = new Intent(getApplicationContext(), ClassAttendanceActivity.class);
+                                               startActivity(intent);
+                                           }
+                                       }
+        );
+
         btnCourse.setOnClickListener(new View.OnClickListener(){
                                            @Override
                                            public void onClick(View view){

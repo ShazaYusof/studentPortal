@@ -13,10 +13,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.guc_registration_system.Model.LectureModel;
-import com.example.guc_registration_system.Model.StudentModel;
+import com.example.guc_registration_system.Model.LecturerModel;
 import com.example.guc_registration_system.R;
-import com.example.guc_registration_system.Student.StudentUpdateProfileActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -84,7 +82,7 @@ public class LectureUpdateProfileActivity extends AppCompatActivity {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                LectureModel lectureProfile = dataSnapshot.getValue(LectureModel.class);
+                LecturerModel lectureProfile = dataSnapshot.getValue(LecturerModel.class);
                 userID.setText(lectureProfile.getLectID());
                 userName.setText( lectureProfile.getLectName());
                 userPassport.setText(lectureProfile.getLectPassport());

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -14,6 +15,8 @@ import android.widget.Toast;
 
 import com.example.guc_registration_system.Adapter.MyCourseAdapter;
 import com.example.guc_registration_system.Model.CourseModel;
+import com.example.guc_registration_system.Model.StudentCourseModel;
+import com.example.guc_registration_system.Model.StudentModel;
 import com.example.guc_registration_system.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -31,12 +34,15 @@ public class MyCourseActivity extends AppCompatActivity {
     TextView txtMoment;
     ImageView man;
     ArrayList<CourseModel> courseList;
+    ArrayList<StudentCourseModel> studentCourseList;
     MyCourseAdapter adapter;
 
     private ProgressBar progressBar;
     private FirebaseAuth mAuth;
     private FirebaseDatabase firebaseDatabase;
     DatabaseReference dbRef;
+
+    StudentModel myStudent;
 
     String courseID,courseName;
 
@@ -57,34 +63,102 @@ public class MyCourseActivity extends AppCompatActivity {
         RecyclerBooking.setHasFixedSize(true);
         RecyclerBooking.setLayoutManager( new LinearLayoutManager(this));
 
-        man.setVisibility(View.VISIBLE);
-        txtMoment.setVisibility(View.VISIBLE);
+        man.setVisibility(View.GONE);
+        txtMoment.setVisibility(View.GONE);
 
         courseID = getIntent().getStringExtra("course_id");
         courseName = getIntent().getStringExtra("course_name");
 
-        dbRef = FirebaseDatabase.getInstance().getReference().child("StudentCourse");
-        final Query queryRef = FirebaseDatabase.getInstance().getReference("StudentCourse").child(mAuth.getUid()).child("semester2");
+        courseList = new ArrayList<CourseModel>();
 
-        queryRef.addValueEventListener(new ValueEventListener() {
+        Log.d("TAG", "ab1 uid"+mAuth.getUid());
+
+        DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference("Students").child(mAuth.getUid());
+        studentRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                courseList = new ArrayList<CourseModel>();
-                for(DataSnapshot dataSnapshot1: dataSnapshot.getChildren())
-                {
-                    CourseModel p = dataSnapshot1.getValue(CourseModel.class);
-                    courseList.add(p);
-                    man.setVisibility(View.GONE);
-                    txtMoment.setVisibility(View.GONE);
-                }
-                adapter = new MyCourseAdapter(courseList);
-                RecyclerBooking.setAdapter(adapter);
+
+                myStudent = dataSnapshot.getValue(StudentModel.class);
+
+                Log.d("TAG", "ab1 student program : "+myStudent.getProgramme());
+
+
+                dbRef = FirebaseDatabase.getInstance().getReference().child("StudentCourse");
+                final Query queryRef = FirebaseDatabase.getInstance().getReference("StudentCourse").orderByChild("studentID").equalTo(mAuth.getUid());
+
+                queryRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        if(!dataSnapshot.exists()){
+                            man.setVisibility(View.VISIBLE);
+                            txtMoment.setVisibility(View.VISIBLE);
+                        }
+
+                        for(DataSnapshot data: dataSnapshot.getChildren()) {
+                            StudentCourseModel sc = data.getValue(StudentCourseModel.class);
+                            Log.d("TAG", "ab1 sc semester : "+sc.getSemester());
+                            Log.d("TAG", "ab1 sc course : "+sc.getCourseID());
+
+                            if(sc.getSemester().equals(myStudent.getStudSemester())) {
+
+                                Log.d("TAG", "ab1 same semester : "+myStudent.getStudSemester());
+
+                                final Query query = FirebaseDatabase.getInstance().getReference("Course").child(sc.getCourseID());
+                                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                        Log.d("TAG", "ab1 data : "+dataSnapshot.toString());
+                                        CourseModel courseModel = dataSnapshot.getValue(CourseModel.class);
+                                        Log.d("TAG", "ab1 course model name "+courseModel.getCourseName());
+                                        courseModel.setCourseID(dataSnapshot.getKey());
+                                        courseList.add(courseModel);
+                                        man.setVisibility(View.GONE);
+                                        txtMoment.setVisibility(View.GONE);
+                                        adapter = new MyCourseAdapter(courseList);
+                                        RecyclerBooking.setAdapter(adapter);
+
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+
+                        }
+
+
+
+
+
+
+//                    CourseModel p = child.getValue(CourseModel.class);
+//                    p.setCourseID(child.getKey());
+//                    courseList.add(p);
+//                    man.setVisibility(View.GONE);
+//                    txtMoment.setVisibility(View.GONE);
+//                adapter = new MyCourseAdapter(courseList);
+//                RecyclerBooking.setAdapter(adapter);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Toast.makeText(MyCourseActivity.this, "There is an error occur. Please try again.", Toast.LENGTH_LONG).show();
+                    }
+                });
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(MyCourseActivity.this, "There is an error occur. Please try again.", Toast.LENGTH_LONG).show();
+
             }
         });
+
+
     }
 }

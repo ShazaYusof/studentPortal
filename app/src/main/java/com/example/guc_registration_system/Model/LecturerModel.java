@@ -1,18 +1,18 @@
 package com.example.guc_registration_system.Model;
 
-public class LectureModel {
+public class LecturerModel {
 
-   public String lectID,lectName,lectProgramme,LectPassport,lectEmail,lectPhone,lectAddress,databaseId;
+    public String lectID, lectName, lectProgramme, lectPassport, lectEmail, lectPhone, lectAddress, databaseId;
 
-    public LectureModel() {
+    public LecturerModel() {
 
     }
 
-    public LectureModel(String lectID, String lectName, String lectProgramme, String lectPassport, String lectEmail, String lectPhone, String lectAddress, String databaseId) {
+    public LecturerModel(String lectID, String lectName, String lectProgramme, String lectPassport, String lectEmail, String lectPhone, String lectAddress, String databaseId) {
         this.lectID = lectID;
         this.lectName = lectName;
         this.lectProgramme = lectProgramme;
-        LectPassport = lectPassport;
+        this.lectPassport = lectPassport;
         this.lectEmail = lectEmail;
         this.lectPhone = lectPhone;
         this.lectAddress = lectAddress;
@@ -24,48 +24,15 @@ public class LectureModel {
     }
 
     public void setLectID(String lectID) {
-
         this.lectID = lectID;
     }
 
     public String getLectName() {
-
         return lectName;
     }
 
     public void setLectName(String lectName) {
-
         this.lectName = lectName;
-    }
-
-    public String getLectEmail() {
-
-        return lectEmail;
-    }
-
-    public void setLectEmail(String lectEmail) {
-
-        this.lectEmail = lectEmail;
-    }
-
-    public String getLectPhone() {
-
-        return lectPhone;
-    }
-
-    public void setLectPhone(String lectPhone) {
-
-        this.lectPhone = lectPhone;
-    }
-
-    public String getLectAddress() {
-
-        return lectAddress;
-    }
-
-    public void setLectAddress(String lectAddress) {
-
-        this.lectAddress = lectAddress;
     }
 
     public String getLectProgramme() {
@@ -77,11 +44,35 @@ public class LectureModel {
     }
 
     public String getLectPassport() {
-        return LectPassport;
+        return lectPassport;
     }
 
     public void setLectPassport(String lectPassport) {
-        LectPassport = lectPassport;
+        this.lectPassport = lectPassport;
+    }
+
+    public String getLectEmail() {
+        return lectEmail;
+    }
+
+    public void setLectEmail(String lectEmail) {
+        this.lectEmail = lectEmail;
+    }
+
+    public String getLectPhone() {
+        return lectPhone;
+    }
+
+    public void setLectPhone(String lectPhone) {
+        this.lectPhone = lectPhone;
+    }
+
+    public String getLectAddress() {
+        return lectAddress;
+    }
+
+    public void setLectAddress(String lectAddress) {
+        this.lectAddress = lectAddress;
     }
 
     public String getDatabaseId() {

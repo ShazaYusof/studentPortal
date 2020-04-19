@@ -5,11 +5,15 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/logo_guc"
-        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".List.ListRegisterCourse"></activity>
+        <activity android:name=".Lecture.LectureCourseActivity"></activity>
+        <activity android:name=".Lecture.ClassAttendanceActivity" />
+        <activity android:name=".Lecture.AttendanceStudentFragmentActivity" />
+        <activity android:name=".Lecture.ListStudentFragmentActivity" />
+        <activity android:name=".Student.ListAssignmentActivity" />
+        <activity android:name=".List.ListRegisterCourse" />
         <activity android:name=".Lecture.LectureTimetableActivity" />
         <activity android:name=".Lecture.LectureUpdateProfileActivity" />
         <activity android:name=".Lecture.LectureProfileActivity" />

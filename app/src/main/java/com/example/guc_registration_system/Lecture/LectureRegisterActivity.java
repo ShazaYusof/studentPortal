@@ -16,10 +16,8 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.guc_registration_system.Model.LectureModel;
-import com.example.guc_registration_system.Model.StudentModel;
+import com.example.guc_registration_system.Model.LecturerModel;
 import com.example.guc_registration_system.R;
-import com.example.guc_registration_system.Student.StudentRegisterActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -31,7 +29,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.uncopt.android.widget.text.justify.JustifiedEditText;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -122,7 +119,7 @@ public class LectureRegisterActivity extends AppCompatActivity {
         userPassword=findViewById(R.id.etPassword);
         userEmail=findViewById(R.id.etEmail);
         userPhone=findViewById(R.id.etPhone);
-        userPassport = findViewById(R.id.etPassport);
+        userPassport = findViewById(R.id.etIC);
         userAddress = findViewById(R.id.etAddress);
         userProgramme = findViewById(R.id.spinnerProgramme);
         SignupButton=findViewById(R.id.btnReg);
@@ -195,7 +192,7 @@ public class LectureRegisterActivity extends AppCompatActivity {
                 Toast.makeText(LectureRegisterActivity.this, "Upload successful!", Toast.LENGTH_SHORT).show();
             }
         });
-        LectureModel lectureProfile = new LectureModel(id,name,programme,passport,email,phone,address,FirebaseAuth.getInstance().getCurrentUser().getUid());
+        LecturerModel lectureProfile = new LecturerModel(id,name,programme,passport,email,phone,address,FirebaseAuth.getInstance().getCurrentUser().getUid());
         myRef.setValue(lectureProfile);
 
     }
