@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Student.RegisterCourseActivity"
-    android:background="@drawable/flo"
-   >
+    tools:context=".Student.CourseValidationActivity"
+    android:background="@drawable/flo">
 
     <ScrollView
         android:layout_width="fill_parent"
@@ -37,7 +36,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="40dp"
                     android:gravity="center"
-                    android:text="ACADEMIC FORM"
+                    android:text="COURSE VALIDATION"
                     android:textColor="@color/hitam"
                     android:textSize="15sp"
                     android:textStyle="bold" />
@@ -62,14 +61,14 @@
                 android:layout_marginLeft="10dp">
 
 
-                    <TextView
-                        android:id="@+id/studName"
-                        android:layout_width="200dp"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        tools:layout_editor_absoluteX="32dp"
-                        tools:layout_editor_absoluteY="318dp"
-                        android:layout_marginTop="8dp"/>
+                <TextView
+                    android:id="@+id/studName"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    tools:layout_editor_absoluteX="32dp"
+                    tools:layout_editor_absoluteY="318dp"
+                    android:layout_marginTop="8dp"/>
 
                 <View
                     android:layout_width="1dp"
@@ -95,7 +94,7 @@
                         android:ems="10"
                         tools:layout_editor_absoluteX="32dp"
                         tools:layout_editor_absoluteY="318dp"
-                         />
+                        />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
@@ -192,7 +191,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="87dp"
+                        android:layout_width="92dp"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="10dp"
@@ -202,7 +201,7 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:layout_width="140dp"
+                        android:layout_width="168dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:gravity="center"
@@ -220,18 +219,19 @@
                         android:textStyle="bold" />
 
                 </LinearLayout>
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/RecyclerCourse"
-                            android:scrollbars="vertical"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/RecyclerCourse"
+                    android:scrollbars="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
                 <TextView
                     android:id="@+id/tvNotes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="You already register your courses.For more information, please refer at MY COURSE page "
+                    android:text="Please register your course first before view and  print the course validation "
                     android:gravity="center"
                     android:textColor="@color/maroon"
                     android:textStyle="bold"
@@ -250,13 +250,13 @@
 
 
             <Button
-                android:id="@+id/btnRegister"
-                android:layout_width="290dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="50dp"
+                android:id="@+id/btnPrint"
+                android:layout_width="228dp"
+                android:layout_height="32dp"
                 android:layout_marginTop="40dp"
+                android:layout_marginBottom="50dp"
                 android:background="@drawable/custom_button"
-                android:text="REGISTER"
+                android:text="PRINT VALIDATION"
                 android:textColor="@color/putih"
                 android:textSize="15sp"
                 tools:layout_editor_absoluteX="144dp"
@@ -264,6 +264,5 @@
 
         </LinearLayout>
     </ScrollView>
-
 
 </RelativeLayout>

@@ -39,6 +39,7 @@ public class RegisterCourseAdapter extends RecyclerView.Adapter<RegisterCourseAd
         //CourseModel course = courseList.get(position);
         holder.textViewCourseID.setText(courseList.get(position).getCourseID());
         holder.textViewCourseName.setText(courseList.get(position).getCourseName());
+        holder.textViewCreditValue.setText(courseList.get(position).getCreditValue());
 
     }
     @Override
@@ -49,7 +50,7 @@ public class RegisterCourseAdapter extends RecyclerView.Adapter<RegisterCourseAd
 
     class CourseViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView textViewCourseID, textViewCourseName;
+        TextView textViewCourseID, textViewCourseName,textViewCreditValue;
         ToggleButton toggleButton;
 
 
@@ -58,6 +59,7 @@ public class RegisterCourseAdapter extends RecyclerView.Adapter<RegisterCourseAd
             textViewCourseID = itemView.findViewById(R.id.courseID);
             textViewCourseName= itemView.findViewById(R.id.courseName);
             toggleButton = itemView.findViewById(R.id.btnEnroll);
+            textViewCreditValue = itemView.findViewById(R.id.creditValue);
             toggleButton.setOnClickListener(this);
         }
 

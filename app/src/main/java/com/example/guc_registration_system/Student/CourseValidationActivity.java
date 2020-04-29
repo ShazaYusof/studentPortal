@@ -8,12 +8,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
+import com.example.guc_registration_system.Adapter.CourseValidationAdapter;
 import com.example.guc_registration_system.Adapter.MyCourseAdapter;
+import com.example.guc_registration_system.Adapter.RegisterCourseAdapter;
 import com.example.guc_registration_system.Model.CourseModel;
 import com.example.guc_registration_system.Model.StudentCourseModel;
 import com.example.guc_registration_system.Model.StudentModel;
@@ -28,43 +32,45 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class MyCourseActivity extends AppCompatActivity {
+public class CourseValidationActivity extends AppCompatActivity {
 
-    RecyclerView RecyclerBooking;
-    TextView txtMoment;
-    ImageView man;
-    ArrayList<CourseModel> courseList;
-    ArrayList<StudentCourseModel> studentCourseList;
-    MyCourseAdapter adapter;
+    TextView tvName, tvStudentID, tvFaculty, tvProgramme, tvSemester,tvRemainder;
+    Button btn_print;
 
-    private ProgressBar progressBar;
+    String courseID, courseName,programmeName,semester;
+
     private FirebaseAuth mAuth;
     private FirebaseDatabase firebaseDatabase;
     DatabaseReference dbRef;
 
-    StudentModel myStudent;
+    RecyclerView RecyclerBooking;
+    ProgressBar progressBar;
 
-    String courseID,courseName;
+    ArrayList<CourseModel> courseList;
+    CourseValidationAdapter adapter;
+
+    StudentModel myStudent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_course);
+        setContentView(R.layout.activity_course_validation);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        RecyclerBooking = findViewById(R.id.RecyclerBooking);
+        tvName = findViewById(R.id.studName);
+        tvStudentID = findViewById(R.id.studID);
+        tvFaculty = findViewById(R.id.studFaculty);
+        tvProgramme = findViewById(R.id.studProgramme);
+        tvSemester = findViewById(R.id.studSemester);
+        btn_print = findViewById(R.id.btnPrint);
+        RecyclerBooking = findViewById(R.id.RecyclerCourse);
         progressBar = findViewById(R.id.progressBar);
-        man = findViewById(R.id.sadMan);
-        txtMoment = findViewById(R.id.moment);
-
-        mAuth = FirebaseAuth.getInstance();
+        tvRemainder = findViewById(R.id.tvNotes);
 
         RecyclerBooking.setHasFixedSize(true);
-        RecyclerBooking.setLayoutManager( new LinearLayoutManager(this));
+        RecyclerBooking.setLayoutManager(new LinearLayoutManager(this));
 
-        man.setVisibility(View.GONE);
-        txtMoment.setVisibility(View.GONE);
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
         courseID = getIntent().getStringExtra("course_id");
         courseName = getIntent().getStringExtra("course_name");
@@ -73,14 +79,28 @@ public class MyCourseActivity extends AppCompatActivity {
 
         Log.d("TAG", "ab1 uid"+mAuth.getUid());
 
-        DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference("Students").child(mAuth.getUid());
-        studentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference databaseReference = firebaseDatabase.getReference("Students").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                StudentModel userProfile = dataSnapshot.getValue(StudentModel.class);
+                tvName.setText(userProfile.getStudName());
+                tvStudentID.setText(userProfile.getStudID());
+                tvFaculty.setText(userProfile.getFaculty());
+                tvProgramme.setText(userProfile.getProgramme());
+                tvSemester.setText(userProfile.getStudSemester());
 
                 myStudent = dataSnapshot.getValue(StudentModel.class);
 
                 Log.d("TAG", "ab1 student program : "+myStudent.getProgramme());
+
+                courseID = getIntent().getStringExtra("course_id");
+                courseName = getIntent().getStringExtra("course_name");
+
+                courseList = new ArrayList<CourseModel>();
+
+                Log.d("TAG", "ab1 uid"+mAuth.getUid());
 
 
                 dbRef = FirebaseDatabase.getInstance().getReference().child("StudentCourse");
@@ -91,8 +111,8 @@ public class MyCourseActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                         if(!dataSnapshot.exists()){
-                            man.setVisibility(View.VISIBLE);
-                            txtMoment.setVisibility(View.VISIBLE);
+                            tvRemainder.setVisibility(View.GONE);
+
                         }
 
                         for(DataSnapshot data: dataSnapshot.getChildren()) {
@@ -114,9 +134,8 @@ public class MyCourseActivity extends AppCompatActivity {
                                         Log.d("TAG", "ab1 course model name "+courseModel.getCourseName());
                                         courseModel.setCourseID(dataSnapshot.getKey());
                                         courseList.add(courseModel);
-                                        man.setVisibility(View.GONE);
-                                        txtMoment.setVisibility(View.GONE);
-                                        adapter = new MyCourseAdapter(courseList);
+                                        tvRemainder.setVisibility(View.GONE);
+                                        adapter = new CourseValidationAdapter(courseList);
                                         RecyclerBooking.setAdapter(adapter);
 
 
@@ -130,15 +149,17 @@ public class MyCourseActivity extends AppCompatActivity {
                             }
 
                         }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Toast.makeText(MyCourseActivity.this, "There is an error occur. Please try again.", Toast.LENGTH_LONG).show();
-                    }
-                });
 
             }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(CourseValidationActivity.this,databaseError.getCode(),Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+    }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {

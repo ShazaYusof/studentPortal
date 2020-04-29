@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Student.ListAssignmentActivity"
+    tools:context=".Lecture.LectAssignmentActivity"
     android:background="@drawable/flo"
     android:padding="20dp">
 
@@ -16,7 +16,10 @@
         <ListView
             android:id="@+id/listFile"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
+
+
+        </ListView>
     </ScrollView>
 
 </RelativeLayout>

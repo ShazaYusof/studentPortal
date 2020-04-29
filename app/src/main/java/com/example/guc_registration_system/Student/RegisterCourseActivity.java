@@ -37,14 +37,14 @@ public class RegisterCourseActivity extends AppCompatActivity implements Registe
 
     private LinearLayout parentLinearLayout;
 
-    TextView tvName, tvStudentID, tvAddress, tvProgramme, tvSemester,tvRemainder;
+    TextView tvName, tvStudentID, tvFaculty, tvProgramme, tvSemester,tvRemainder;
     EditText etCourseID, etCourseName;
     Button btn_register;
     ToggleButton btn_enroll;
     String courseID, courseName,programmeName,semester;
     //public static final String programmeName = "programmeName", semester="semester";
     private FirebaseDatabase firebaseDatabase;
-    FirebaseAuth firebaseAuth;
+    private FirebaseAuth mAuth;
 
     RecyclerView recyclerView;
     RegisterCourseAdapter adapter;
@@ -64,7 +64,7 @@ public class RegisterCourseActivity extends AppCompatActivity implements Registe
 
         tvName = findViewById(R.id.studName);
         tvStudentID = findViewById(R.id.studID);
-        tvAddress = findViewById(R.id.studAddress);
+        tvFaculty = findViewById(R.id.studFaculty);
         tvProgramme = findViewById(R.id.studProgramme);
         tvSemester = findViewById(R.id.studSemester);
         btn_register = findViewById(R.id.btnRegister);
@@ -76,7 +76,7 @@ public class RegisterCourseActivity extends AppCompatActivity implements Registe
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        firebaseAuth = FirebaseAuth.getInstance();
+
         firebaseDatabase = FirebaseDatabase.getInstance();
 
         tvRemainder.setVisibility(View.GONE);
@@ -90,7 +90,7 @@ public class RegisterCourseActivity extends AppCompatActivity implements Registe
                 StudentModel userProfile = dataSnapshot.getValue(StudentModel.class);
                 tvName.setText(userProfile.getStudName());
                 tvStudentID.setText(userProfile.getStudID());
-                tvAddress.setText(userProfile.getStudAddress());
+                tvFaculty.setText(userProfile.getFaculty());
                 tvProgramme.setText(userProfile.getProgramme());
                 tvSemester.setText(userProfile.getStudSemester());
 
@@ -100,7 +100,7 @@ public class RegisterCourseActivity extends AppCompatActivity implements Registe
                 Log.d("TAG", "prog : "+userProfile.getProgramme());
                 Log.d("TAG", "sem : "+userProfile.getStudSemester());
 
-                final Query query = FirebaseDatabase.getInstance().getReference("University").child("Faculty Of Computing And Creative Technology").child("Programme")
+                final Query query = FirebaseDatabase.getInstance().getReference("University").child(userProfile.getFaculty()).child("Programme")
                         .child(userProfile.getProgramme()).orderByChild("courseYear").equalTo(userProfile.getStudSemester());
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -114,13 +114,15 @@ public class RegisterCourseActivity extends AppCompatActivity implements Registe
 
                             String courseID = data.child("courseID").getValue().toString();
                             String courseName =  data.child("courseName").getValue().toString();
+                            String creditValue = data.child("creditValue").getValue().toString();
                             //String studId  = data.child("studId").getValue().toString();
 
                             Log.d("TAG", "courseID : "+data.toString());
                             Log.d("TAG", "courseID : "+data.child("courseID").getValue().toString());
                             Log.d("TAG", "courseName : "+data.child("courseName").getValue().toString());
+                            Log.d("TAG", "creditValue : "+data.child("creditValue").getValue().toString());
 
-                            courseList.add(new CourseModel(courseID,courseName,null,null,null));
+                            courseList.add(new CourseModel(courseID,courseName,null,null,null,creditValue));
                         }
 
                         adapter = new RegisterCourseAdapter(courseList, RegisterCourseActivity.this);
@@ -133,9 +135,46 @@ public class RegisterCourseActivity extends AppCompatActivity implements Registe
                     }
                 });
 
+                mAuth = FirebaseAuth.getInstance();
+
+//                DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference("StudentCourse").child(mAuth.getUid());
+//                studentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    final Query queryCourse = FirebaseDatabase.getInstance().getReference("StudentCourse").orderByChild("semester").equalTo(userProfile.getStudSemester());
+                    queryCourse.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                                    final CourseModel courseModel = childSnapshot.getValue(CourseModel.class);
+                                    tvRemainder.setVisibility(View.VISIBLE);
+
+                                }
+                            }
+                            else{
+                                tvRemainder.setVisibility(View.GONE);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+//
+
             }
 
-            @Override
+//            @Override }
+////
+////                    @Override
+////                    public void onCancelled(@NonNull DatabaseError databaseError) {
+////
+////                    }
+////                });
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(RegisterCourseActivity.this, databaseError.getCode(), Toast.LENGTH_SHORT).show();
 
@@ -162,6 +201,7 @@ public class RegisterCourseActivity extends AppCompatActivity implements Registe
 
         String studId =  tvStudentID.getText().toString();
         String studName = tvName.getText().toString();
+
 
         Toast.makeText(this, "courseID : "+courseList.get(position).courseName, Toast.LENGTH_SHORT).show();
         FirebaseDatabase database = FirebaseDatabase.getInstance();

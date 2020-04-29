@@ -55,7 +55,7 @@ public class StudentHomepageActivity extends AppCompatActivity {
         btnSchedule.setOnClickListener(new View.OnClickListener(){
                                            @Override
                                            public void onClick(View view){
-                                               Intent intent = new Intent(getApplicationContext(), ClassAttendanceActivity.class);
+                                               Intent intent = new Intent(getApplicationContext(), CourseValidationActivity.class);
                                                startActivity(intent);
                                            }
                                        }
