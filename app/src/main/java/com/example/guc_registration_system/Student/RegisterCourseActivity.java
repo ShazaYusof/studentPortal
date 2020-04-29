@@ -114,7 +114,7 @@ public class RegisterCourseActivity extends AppCompatActivity implements Registe
 
                             String courseID = data.child("courseID").getValue().toString();
                             String courseName =  data.child("courseName").getValue().toString();
-                            String creditValue = data.child("creditValue").getValue().toString();
+                            int creditValue = Integer.parseInt(data.child("creditValue").getValue().toString());
                             //String studId  = data.child("studId").getValue().toString();
 
                             Log.d("TAG", "courseID : "+data.toString());

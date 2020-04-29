@@ -2,13 +2,14 @@ package com.example.guc_registration_system.Model;
 
 public class CourseModel {
 
-    public String courseID,courseName,semester,faculty,programme,creditValue;
+    public String courseID,courseName,semester,faculty,programme;
+    private int creditValue;
 
     public CourseModel(){
 
     }
 
-    public CourseModel(String courseID, String courseName, String semester, String faculty, String programme, String creditValue) {
+    public CourseModel(String courseID, String courseName, String semester, String faculty, String programme, int creditValue) {
         this.courseID = courseID;
         this.courseName = courseName;
         this.semester = semester;
@@ -57,11 +58,11 @@ public class CourseModel {
         this.programme = programme;
     }
 
-    public String getCreditValue() {
+    public int getCreditValue() {
         return creditValue;
     }
 
-    public void setCreditValue(String creditValue) {
+    public void setCreditValue(int creditValue) {
         this.creditValue = creditValue;
     }
 }
