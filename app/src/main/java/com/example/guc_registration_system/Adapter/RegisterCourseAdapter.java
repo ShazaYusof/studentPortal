@@ -39,7 +39,7 @@ public class RegisterCourseAdapter extends RecyclerView.Adapter<RegisterCourseAd
         //CourseModel course = courseList.get(position);
         holder.textViewCourseID.setText(courseList.get(position).getCourseID());
         holder.textViewCourseName.setText(courseList.get(position).getCourseName());
-        holder.textViewCreditValue.setText(courseList.get(position).getCreditValue());
+        holder.textViewCreditValue.setText(Integer.toString(courseList.get(position).getCreditValue()));
 
     }
     @Override

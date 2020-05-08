@@ -40,7 +40,7 @@ public class CourseValidationAdapter extends RecyclerView.Adapter<CourseValidati
 
         holder.courseID.setText(courseList.get(position).getCourseID());
         holder.courseName.setText(courseList.get(position).getCourseName());
-        holder.creditValue.setText(courseList.get(position).getCreditValue());
+        holder.creditValue.setText(Integer.toString(courseList.get(position).getCreditValue()));
 
     }
 

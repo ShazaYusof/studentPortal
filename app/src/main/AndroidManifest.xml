@@ -8,7 +8,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Student.CourseValidationActivity"></activity>
+        <activity android:name=".Student.ListAssignmentFragmentActivity"></activity>
+        <activity android:name=".Student.ListNotesFragmentActivity" />
+        <activity android:name=".Student.CourseValidationActivity" />
         <activity android:name=".Lecture.LectAssignmentActivity" />
         <activity android:name=".Lecture.LectureCourseActivity" />
         <activity android:name=".Lecture.ClassAttendanceActivity" />

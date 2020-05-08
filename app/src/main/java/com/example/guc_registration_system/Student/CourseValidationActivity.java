@@ -72,6 +72,9 @@ public class CourseValidationActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
+        btn_print.setVisibility(View.GONE);
+        tvRemainder.setVisibility(View.VISIBLE);
+
         courseID = getIntent().getStringExtra("course_id");
         courseName = getIntent().getStringExtra("course_name");
 
@@ -113,6 +116,7 @@ public class CourseValidationActivity extends AppCompatActivity {
                         if(!dataSnapshot.exists()){
                             tvRemainder.setVisibility(View.GONE);
 
+
                         }
 
                         for(DataSnapshot data: dataSnapshot.getChildren()) {
@@ -135,6 +139,7 @@ public class CourseValidationActivity extends AppCompatActivity {
                                         courseModel.setCourseID(dataSnapshot.getKey());
                                         courseList.add(courseModel);
                                         tvRemainder.setVisibility(View.GONE);
+                                        btn_print.setVisibility(View.VISIBLE);
                                         adapter = new CourseValidationAdapter(courseList);
                                         RecyclerBooking.setAdapter(adapter);
 

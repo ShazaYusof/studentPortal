@@ -22,16 +22,6 @@ import java.util.ArrayList;
 
 public class ClassAttendanceActivity extends AppCompatActivity {
 
-    RecyclerView RecyclerStudent;
-    ArrayList<StudentCourseModel> student;
-
-    ListStudentAdapter adapter;
-
-    private ProgressBar progressBar;
-    private FirebaseAuth mAuth;
-    private FirebaseDatabase firebaseDatabase;
-    DatabaseReference dbRef;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

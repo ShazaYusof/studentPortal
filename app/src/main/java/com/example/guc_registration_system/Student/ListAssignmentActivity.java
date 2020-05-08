@@ -2,6 +2,7 @@ package com.example.guc_registration_system.Student;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -11,8 +12,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.guc_registration_system.Adapter.ClassAttendanceAdapter;
+import com.example.guc_registration_system.Adapter.StudentNotesAdapter;
 import com.example.guc_registration_system.Model.AssignmentModel;
 import com.example.guc_registration_system.R;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,66 +29,40 @@ import java.util.List;
 
 public class ListAssignmentActivity extends AppCompatActivity {
 
-    ListView fileList;
-    DatabaseReference databaseReference;
-    List<AssignmentModel> assignmentList;
-    String courseID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_assignment);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        toolbar.setTitle("Select Your Favorite IDE");
+//        setSupportActionBar(toolbar);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
 
-        fileList = findViewById(R.id.listFile);
-        assignmentList = new ArrayList<>();
+        tabLayout.addTab(tabLayout.newTab().setText("Notes").setIcon(R.drawable.book2));
+        tabLayout.addTab(tabLayout.newTab().setText("Assignment").setIcon(R.drawable.assignment));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        final Intent intent = getIntent();
-         String courseName = intent.getStringExtra("course_name");
-       courseID = intent.getStringExtra("course_id");
-
-        viewAllAssignments();
-
-        fileList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        final StudentNotesAdapter adapter = new StudentNotesAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                AssignmentModel assignmentModel = assignmentList.get(position);
-
-                Intent intent1 = new Intent();
-                intent1.setData(Uri.parse(assignmentModel.getUrl()));
-                startActivity(intent);
-            }
-        });
-
-    }
-
-    private  void viewAllAssignments(){
-        final Intent intent = getIntent();
-        //String courseName = intent.getStringExtra("course_name");
-        final String courseID = intent.getStringExtra("course_id");
-
-        Query query = FirebaseDatabase.getInstance().getReference("Assignment").orderByChild("courseCode").equalTo(courseID);
-
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot postSnapshot:dataSnapshot.getChildren()){
-                    AssignmentModel data = postSnapshot.getValue(AssignmentModel.class);
-                    assignmentList.add(data);
-
-                }
-                String[] list = new String[assignmentList.size()];
-
-                for(int i=0; i<list.length; i++){
-                    list[i] = assignmentList.get(i).getFileName();
-                }
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,list);
-                fileList.setAdapter(adapter);
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
 
             }
         });
     }
+
 }

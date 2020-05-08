@@ -17,7 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class StudentHomepageActivity extends AppCompatActivity {
 
-    private Button btnProfile,btnRegister,btnCourse,btnSchedule;
+    private Button btnProfile,btnRegister,btnCourse,btnValidate;
     FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
 
@@ -28,8 +28,8 @@ public class StudentHomepageActivity extends AppCompatActivity {
 
         btnProfile = findViewById(R.id.buttonProfile);
         btnRegister = findViewById(R.id.registerCourse);
-        btnSchedule = findViewById(R.id.buttonSchedule);
-        btnCourse = findViewById(R.id.buttonSearch);
+        btnValidate = findViewById(R.id.buttonValidation);
+        btnCourse = findViewById(R.id.buttonCourse);
 
         firebaseAuth=FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -52,7 +52,7 @@ public class StudentHomepageActivity extends AppCompatActivity {
                                        }
         );
 
-        btnSchedule.setOnClickListener(new View.OnClickListener(){
+        btnValidate.setOnClickListener(new View.OnClickListener(){
                                            @Override
                                            public void onClick(View view){
                                                Intent intent = new Intent(getApplicationContext(), CourseValidationActivity.class);

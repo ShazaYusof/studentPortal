@@ -149,13 +149,13 @@
                             android:layout_width="70dp"
                             android:id="@+id/imageView3"
                             android:layout_height="70dp"
-                            android:src="@drawable/student_book"
+                            android:src="@drawable/contact"
                             android:layout_centerInParent="true"/>
                         <TextView
                             android:id="@+id/textView13"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="My Course"
+                            android:text="Course Validation"
                             android:textSize="16sp"
                             android:layout_below="@+id/imageView3"
                             android:layout_centerHorizontal="true"
@@ -164,7 +164,7 @@
                             android:textColor="@color/colorAccent"/>
 
                         <Button
-                            android:id="@+id/buttonSearch"
+                            android:id="@+id/buttonValidation"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@android:color/transparent" />
@@ -191,12 +191,12 @@
                             android:layout_width="70dp"
                             android:id="@+id/imageView4"
                             android:layout_height="70dp"
-                            android:src="@drawable/schedule"
+                            android:src="@drawable/student_book"
                             android:layout_centerInParent="true"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Timetable"
+                            android:text="My Course"
                             android:textSize="16sp"
                             android:layout_below="@+id/imageView4"
                             android:layout_centerHorizontal="true"
@@ -206,7 +206,7 @@
                         <Button
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:id="@+id/buttonSchedule"
+                            android:id="@+id/buttonCourse"
                             android:background="@android:color/transparent"/>
 
                     </RelativeLayout>

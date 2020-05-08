@@ -55,7 +55,8 @@ public class RegisterCourseActivity extends AppCompatActivity implements Registe
 
     DatabaseReference dbCourse;
 
-    String mySemester;
+    String mySemester,myProgram,myFaculty,myStudentID;
+    boolean exist = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,38 +96,70 @@ public class RegisterCourseActivity extends AppCompatActivity implements Registe
                 tvSemester.setText(userProfile.getStudSemester());
 
                 mySemester = userProfile.getStudSemester();
+                myFaculty = userProfile.getFaculty();
+                myProgram = userProfile.getProgramme();
+                myStudentID = userProfile.getStudID();
 
                 Toast.makeText(getApplicationContext(), "prog "+userProfile.getProgramme()+ "year "+userProfile.getStudSemester(), Toast.LENGTH_SHORT).show();
                 Log.d("TAG", "prog : "+userProfile.getProgramme());
                 Log.d("TAG", "sem : "+userProfile.getStudSemester());
 
-                final Query query = FirebaseDatabase.getInstance().getReference("University").child(userProfile.getFaculty()).child("Programme")
-                        .child(userProfile.getProgramme()).orderByChild("courseYear").equalTo(userProfile.getStudSemester());
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                final Query queryCourse = FirebaseDatabase.getInstance().getReference("StudentCourse").orderByChild("semester").equalTo(userProfile.getStudSemester());
+                queryCourse.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                                if(childSnapshot.child("studID").getValue().toString().equals(myStudentID)){
+                                    exist = true;
+                                }
+                                final CourseModel courseModel = childSnapshot.getValue(CourseModel.class);
 
-                        //Log.d("TAG", "data : "+dataSnapshot.toString());
 
-                        for(DataSnapshot data: dataSnapshot.getChildren()) {
+                            }
 
-                            Log.d("TAG", "each data : " + data.toString());
+                            if(exist) {
+                                tvRemainder.setVisibility(View.VISIBLE);
+                                recyclerView.setVisibility(View.GONE);
+                                btn_register.setVisibility(View.GONE);
+                            }
+                            else {
 
-                            String courseID = data.child("courseID").getValue().toString();
-                            String courseName =  data.child("courseName").getValue().toString();
-                            int creditValue = Integer.parseInt(data.child("creditValue").getValue().toString());
-                            //String studId  = data.child("studId").getValue().toString();
+                                final Query query = FirebaseDatabase.getInstance().getReference("University").child(myFaculty).child("Programme")
+                                        .child(myProgram).orderByChild("courseYear").equalTo(mySemester);
+                                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                            Log.d("TAG", "courseID : "+data.toString());
-                            Log.d("TAG", "courseID : "+data.child("courseID").getValue().toString());
-                            Log.d("TAG", "courseName : "+data.child("courseName").getValue().toString());
-                            Log.d("TAG", "creditValue : "+data.child("creditValue").getValue().toString());
+                                        //Log.d("TAG", "data : "+dataSnapshot.toString());
+                                        for(DataSnapshot data: dataSnapshot.getChildren()) {
 
-                            courseList.add(new CourseModel(courseID,courseName,null,null,null,creditValue));
+                                            Log.d("TAG", "each data : " + data.toString());
+
+                                            String courseID = data.child("courseID").getValue().toString();
+                                            String courseName =  data.child("courseName").getValue().toString();
+                                            int creditValue = Integer.parseInt(data.child("creditValue").getValue().toString());
+                                            //String studId  = data.child("studId").getValue().toString();
+
+                                            Log.d("TAG", "courseID : "+data.toString());
+                                            Log.d("TAG", "courseID : "+data.child("courseID").getValue().toString());
+                                            Log.d("TAG", "courseName : "+data.child("courseName").getValue().toString());
+
+                                            courseList.add(new CourseModel(courseID,courseName,null,null,null,creditValue));
+                                        }
+
+                                        adapter = new RegisterCourseAdapter(courseList, RegisterCourseActivity.this);
+                                        recyclerView.setAdapter(adapter);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                            }
                         }
-
-                        adapter = new RegisterCourseAdapter(courseList, RegisterCourseActivity.this);
-                        recyclerView.setAdapter(adapter);
                     }
 
                     @Override
@@ -135,46 +168,13 @@ public class RegisterCourseActivity extends AppCompatActivity implements Registe
                     }
                 });
 
+
+
                 mAuth = FirebaseAuth.getInstance();
 
-//                DatabaseReference studentRef = FirebaseDatabase.getInstance().getReference("StudentCourse").child(mAuth.getUid());
-//                studentRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                    final Query queryCourse = FirebaseDatabase.getInstance().getReference("StudentCourse").orderByChild("semester").equalTo(userProfile.getStudSemester());
-                    queryCourse.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-                                    final CourseModel courseModel = childSnapshot.getValue(CourseModel.class);
-                                    tvRemainder.setVisibility(View.VISIBLE);
-
-                                }
-                            }
-                            else{
-                                tvRemainder.setVisibility(View.GONE);
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-
-//
 
             }
 
-//            @Override }
-////
-////                    @Override
-////                    public void onCancelled(@NonNull DatabaseError databaseError) {
-////
-////                    }
-////                });
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(RegisterCourseActivity.this, databaseError.getCode(), Toast.LENGTH_SHORT).show();
 
@@ -191,8 +191,8 @@ public class RegisterCourseActivity extends AppCompatActivity implements Registe
                 //finish();
                 //startActivity(new Intent(RegisterCourseActivity.this,StudentHomepageActivity.class));
 
-    }
-});
+            }
+        });
 
     }
 
@@ -229,33 +229,4 @@ public class RegisterCourseActivity extends AppCompatActivity implements Registe
     }
 
 
-//    private void addCourse(StudentCourseRegisterModel course) {
-//
-//        semester = tvSemester.getText().toString();
-//        programmeName = tvProgramme.getText().toString();
-//        //courseID = data.child("courseID").getValue().toString();
-//        //courseName =  data.child("courseName").getValue().toString();
-//
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference myref = database.getReference("Student").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("MyCourse").child(semester);
-//
-//        String key = myref.getKey();
-//        //course.setCourseDatabaseID(key);
-//
-//        //add post data to firebase database
-//        myref.setValue(course).addOnSuccessListener(new OnSuccessListener<Void>() {
-//            @Override
-//            public void onSuccess(Void aVoid) {
-//
-//                Toast.makeText(RegisterCourseActivity.this, "Your course registration are submitted", Toast.LENGTH_SHORT).show();
-//                finish();
-//                startActivity(new Intent(RegisterCourseActivity.this, StudentHomepageActivity.class));
-//            }
-//        });
-//
-//    }
 }
-
-
-
-
